@@ -3,6 +3,10 @@ package processors
 import (
 	"image"
 	"image/color"
+
+	// Importing image/jpeg and image/png to help decode
+	_ "image/jpeg"
+	_ "image/png"
 	"math"
 	"os"
 )
