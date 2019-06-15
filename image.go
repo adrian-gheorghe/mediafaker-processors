@@ -36,7 +36,7 @@ type ImageInfo struct {
 
 // PixelRectangle reflects the size, position and color of a pixel rectangle
 type PixelRectangle struct {
-	Color     image.Uniform
+	Color     color.RGBA
 	Rectangle image.Rectangle
 }
 
@@ -85,7 +85,7 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 			y := b * imageInfo.BlockHeight
 			rectangle := image.Rect(x, y, x+imageInfo.BlockWidth, y+imageInfo.BlockHeight)
 			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
-			pixelRectangle := PixelRectangle{Color: image.Uniform{color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}}, Rectangle: rectangle}
+			pixelRectangle := PixelRectangle{Color: color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}, Rectangle: rectangle}
 			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
