@@ -36,12 +36,12 @@ type PixelRectangle struct {
 	Rectangle image.Rectangle
 }
 
-// JpgProcessor structure
-type JpgProcessor struct {
+// ImageProcessor structure
+type ImageProcessor struct {
 }
 
 // Inspect Command
-func (processor *JpgProcessor) Inspect(sourcePath string, sourceInfo os.FileInfo) (ImageInfo, error) {
+func (processor *ImageProcessor) Inspect(sourcePath string, sourceInfo os.FileInfo) (ImageInfo, error) {
 	imageInfo := ImageInfo{}
 
 	sourceFile, err := os.Open(sourcePath)
