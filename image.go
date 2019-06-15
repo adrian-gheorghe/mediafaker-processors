@@ -41,7 +41,7 @@ type ImageProcessor struct {
 }
 
 // Inspect Command
-func (processor *ImageProcessor) Inspect(sourcePath string, sourceInfo os.FileInfo) (ImageInfo, error) {
+func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 	imageInfo := ImageInfo{}
 
 	sourceFile, err := os.Open(sourcePath)
