@@ -38,7 +38,6 @@ type PixelRectangle struct {
 
 // JpgProcessor structure
 type JpgProcessor struct {
-	Sizes map[string]BlockSize
 }
 
 // Inspect Command
