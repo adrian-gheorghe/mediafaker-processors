@@ -63,13 +63,13 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 	imageInfo.BlockWidth = 1
 	imageInfo.BlockHeight = 1
 
-	for i := int(math.Floor(float64(imageInfo.Width) / 15)); i > 4; i-- {
+	for i := int(math.Floor(float64(imageInfo.Width) / 10)); i > 4; i-- {
 		if int(imageInfo.Width%i) == 0 {
 			imageInfo.BlockWidth = i
 			break
 		}
 	}
-	for i := int(math.Floor(float64(imageInfo.Height) / 15)); i > 4; i-- {
+	for i := int(math.Floor(float64(imageInfo.Height) / 10)); i > 4; i-- {
 		if int(imageInfo.Height%i) == 0 {
 			imageInfo.BlockHeight = i
 			break
