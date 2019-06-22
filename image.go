@@ -1,6 +1,7 @@
 package processors
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 
@@ -36,7 +37,7 @@ type ImageInfo struct {
 
 // PixelRectangle reflects the size, position and color of a pixel rectangle
 type PixelRectangle struct {
-	Color     color.RGBA
+	Color     string
 	Rectangle image.Rectangle
 }
 
@@ -85,10 +86,17 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 			y := b * imageInfo.BlockHeight
 			rectangle := image.Rect(x, y, x+imageInfo.BlockWidth, y+imageInfo.BlockHeight)
 			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
-			pixelRectangle := PixelRectangle{Color: color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}, Rectangle: rectangle}
+			colorInfo := processor.GetHexColor(color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)})
+
+			pixelRectangle := PixelRectangle{Color: colorInfo, Rectangle: rectangle}
 			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
 
 	return imageInfo, nil
+}
+
+// GetHexColor turns RGBA to HEX
+func (processor *ImageProcessor) GetHexColor(color color.RGBA) string {
+	return fmt.Sprintf("#%02x%02x%02x", color.R, color.G, color.B)
 }
