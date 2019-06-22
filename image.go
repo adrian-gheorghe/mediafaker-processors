@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"strconv"
 	"strings"
 
 	// Importing image/jpeg and image/png to help decode
@@ -82,7 +83,7 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
 			colorInfo := processor.GetHexColor(color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)})
 
-			pixelRectangle := strings.Join([]string{colorInfo, string(x), string(y), string(x + imageInfo.BlockWidth), string(y + imageInfo.BlockHeight)}, "-")
+			pixelRectangle := strings.Join([]string{colorInfo, strconv.Itoa(x), strconv.Itoa(y), strconv.Itoa(x + imageInfo.BlockWidth), strconv.Itoa(y + imageInfo.BlockHeight)}, "-")
 			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
