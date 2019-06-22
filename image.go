@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"strings"
 
 	// Importing image/jpeg and image/png to help decode
 	_ "image/jpeg"
@@ -30,15 +31,9 @@ type Rect struct {
 type ImageInfo struct {
 	Width       int `json:"Width"`
 	Height      int `json:"Height"`
-	PixelInfo   []PixelRectangle
+	PixelInfo   []string
 	BlockWidth  int
 	BlockHeight int
-}
-
-// PixelRectangle reflects the size, position and color of a pixel rectangle
-type PixelRectangle struct {
-	Color     string
-	Rectangle image.Rectangle
 }
 
 // ImageProcessor structure
@@ -84,11 +79,10 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 		for b := 0; b < int(imageInfo.Height/imageInfo.BlockHeight); b++ {
 			x := a * imageInfo.BlockWidth
 			y := b * imageInfo.BlockHeight
-			rectangle := image.Rect(x, y, x+imageInfo.BlockWidth, y+imageInfo.BlockHeight)
 			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
 			colorInfo := processor.GetHexColor(color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)})
 
-			pixelRectangle := PixelRectangle{Color: colorInfo, Rectangle: rectangle}
+			pixelRectangle := strings.Join([]string{colorInfo, string(x), string(y), string(x + imageInfo.BlockWidth), string(y + imageInfo.BlockHeight)}, "-")
 			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
