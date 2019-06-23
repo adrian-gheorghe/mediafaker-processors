@@ -22,19 +22,19 @@ type BlockSize struct {
 
 // Rect used for image bounds
 type Rect struct {
-	X int
-	Y int
-	W int
-	H int
+	X      int
+	Y      int
+	Width  int
+	Height int
 }
 
 // ImageInfo reflects information required by mediafaker to recreate the file. This amounts to width height and pixel info
 type ImageInfo struct {
-	W  int `json:"Width"`
-	H  int `json:"Height"`
-	P  []string
-	BW int
-	BH int
+	Width       int      `json:"W"`
+	Height      int      `json:"H"`
+	PixelInfo   []string `json:"P"`
+	BlockWidth  int      `json:"BW"`
+	BlockHeight int      `json:"BH"`
 }
 
 // ImageProcessor structure
@@ -58,35 +58,35 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 		return imageInfo, err
 	}
 
-	imageInfo.W = img.Bounds().Max.X
-	imageInfo.H = img.Bounds().Max.Y
-	imageInfo.BW = 1
-	imageInfo.BH = 1
-	minWidth := int(math.Max(math.Floor(float64(imageInfo.W)/10), 50))
-	minHeight := int(math.Max(math.Floor(float64(imageInfo.H)/10), 50))
+	imageInfo.Width = img.Bounds().Max.X
+	imageInfo.Height = img.Bounds().Max.Y
+	imageInfo.BlockWidth = 1
+	imageInfo.BlockHeight = 1
+	minWidth := int(math.Max(math.Floor(float64(imageInfo.Width)/10), 50))
+	minHeight := int(math.Max(math.Floor(float64(imageInfo.Height)/10), 50))
 
 	for i := minWidth; i > 4; i-- {
-		if int(imageInfo.W%i) == 0 {
-			imageInfo.BW = i
+		if int(imageInfo.Width%i) == 0 {
+			imageInfo.BlockWidth = i
 			break
 		}
 	}
 	for i := minHeight; i > 4; i-- {
-		if int(imageInfo.H%i) == 0 {
-			imageInfo.BH = i
+		if int(imageInfo.Height%i) == 0 {
+			imageInfo.BlockHeight = i
 			break
 		}
 	}
 
-	for a := 0; a < int(imageInfo.W/imageInfo.BW); a++ {
-		for b := 0; b < int(imageInfo.H/imageInfo.BH); b++ {
-			x := a * imageInfo.BW
-			y := b * imageInfo.BH
-			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BW)/2)), y+int(math.Round(float64(imageInfo.BH)/2))).RGBA()
+	for a := 0; a < int(imageInfo.Width/imageInfo.BlockWidth); a++ {
+		for b := 0; b < int(imageInfo.Height/imageInfo.BlockHeight); b++ {
+			x := a * imageInfo.BlockWidth
+			y := b * imageInfo.BlockHeight
+			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
 			colorInfo := processor.GetHexColor(color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)})
 
-			pixelRectangle := strings.Join([]string{colorInfo, strconv.Itoa(x), strconv.Itoa(y), strconv.Itoa(x + imageInfo.BW), strconv.Itoa(y + imageInfo.BH)}, "-")
-			imageInfo.P = append(imageInfo.P, pixelRectangle)
+			pixelRectangle := strings.Join([]string{colorInfo, strconv.Itoa(x), strconv.Itoa(y), strconv.Itoa(x + imageInfo.BlockWidth), strconv.Itoa(y + imageInfo.BlockHeight)}, "-")
+			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
 
