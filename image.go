@@ -60,32 +60,21 @@ func (processor *ImageProcessor) Inspect(sourcePath string) (ImageInfo, error) {
 
 	imageInfo.Width = img.Bounds().Max.X
 	imageInfo.Height = img.Bounds().Max.Y
-	imageInfo.BlockWidth = 1
+	imageInfo.BlockWidth = int(math.Floor(float64(imageInfo.Width) / 15))
+	imageInfo.BlockHeight = int(math.Floor(float64(imageInfo.Height) / 15))
 	imageInfo.BlockHeight = 1
-	minWidth := int(math.Max(math.Floor(float64(imageInfo.Width)/10), 50))
-	minHeight := int(math.Max(math.Floor(float64(imageInfo.Height)/10), 50))
-
-	for i := minWidth; i > 4; i-- {
-		if int(imageInfo.Width%i) == 0 {
-			imageInfo.BlockWidth = i
-			break
-		}
-	}
-	for i := minHeight; i > 4; i-- {
-		if int(imageInfo.Height%i) == 0 {
-			imageInfo.BlockHeight = i
-			break
-		}
-	}
 
 	for a := 0; a < int(imageInfo.Width/imageInfo.BlockWidth); a++ {
 		for b := 0; b < int(imageInfo.Height/imageInfo.BlockHeight); b++ {
 			x := a * imageInfo.BlockWidth
 			y := b * imageInfo.BlockHeight
+			xx := math.Max(float64(x+imageInfo.BlockWidth), float64(imageInfo.Width))
+			yy := math.Max(float64(y+imageInfo.BlockHeight), float64(imageInfo.Height))
+
 			a, r, g, b := img.At(x+int(math.Round(float64(imageInfo.BlockWidth)/2)), y+int(math.Round(float64(imageInfo.BlockHeight)/2))).RGBA()
 			colorInfo := processor.GetHexColor(color.RGBA{uint8(a >> 8), uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)})
 
-			pixelRectangle := strings.Join([]string{colorInfo, strconv.Itoa(x), strconv.Itoa(y), strconv.Itoa(x + imageInfo.BlockWidth), strconv.Itoa(y + imageInfo.BlockHeight)}, "-")
+			pixelRectangle := strings.Join([]string{colorInfo, strconv.Itoa(x), strconv.Itoa(y), strconv.Itoa(int(xx)), strconv.Itoa(int(yy))}, "-")
 			imageInfo.PixelInfo = append(imageInfo.PixelInfo, pixelRectangle)
 		}
 	}
