@@ -38,6 +38,12 @@ type ImageInfo struct {
 	BlockHeight int      `json:"BH"`
 }
 
+// PixelRectangle reflects the size, position and color of a pixel rectangle
+type PixelRectangle struct {
+	Color     string
+	Rectangle image.Rectangle
+}
+
 // ImageProcessor structure
 type ImageProcessor struct {
 }
@@ -121,4 +127,39 @@ func (processor *ImageProcessor) ParseHexColorFast(s string) (c color.RGBA, err 
 		err = errors.New("Pixel color information is incorrect")
 	}
 	return
+}
+
+// ExtractPixelInfo turns compressed pixelinfo string into struct slice
+func (processor *ImageProcessor) ExtractPixelInfo(s string) ([]PixelRectangle, error) {
+	var rectanglesReturn []PixelRectangle
+
+	rectangles := strings.Split(s, "_")
+	for i := 0; i < len(rectangles); i++ {
+		rectangleInfo := strings.Split(rectangles[i], "-")
+		x, err := strconv.Atoi(rectangleInfo[1])
+		if err != nil {
+			return rectanglesReturn, errors.New("Pixel position information is incorrect")
+		}
+
+		y, err := strconv.Atoi(rectangleInfo[2])
+		if err != nil {
+			return rectanglesReturn, errors.New("Pixel position information is incorrect")
+		}
+
+		a, err := strconv.Atoi(rectangleInfo[3])
+		if err != nil {
+			return rectanglesReturn, errors.New("Pixel position information is incorrect")
+		}
+
+		b, err := strconv.Atoi(rectangleInfo[4])
+		if err != nil {
+			return rectanglesReturn, errors.New("Pixel position information is incorrect")
+		}
+
+		rectangle := image.Rect(x, y, a, b)
+		pixelRectangle := PixelRectangle{Color: rectangleInfo[0], Rectangle: rectangle}
+		rectanglesReturn = append(rectanglesReturn, pixelRectangle)
+	}
+
+	return rectanglesReturn, nil
 }
