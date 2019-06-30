@@ -135,31 +135,41 @@ func (processor *ImageProcessor) ExtractPixelInfo(s string) ([]PixelRectangle, e
 
 	rectangles := strings.Split(s, "_")
 	for i := 0; i < len(rectangles); i++ {
-		rectangleInfo := strings.Split(rectangles[i], "-")
-		x, err := strconv.Atoi(rectangleInfo[1])
+		pixelRectangle, err := processor.ExtractRectangleInfo(rectangles[i])
 		if err != nil {
-			return rectanglesReturn, errors.New("Pixel position information is incorrect")
+			return rectanglesReturn, err
 		}
-
-		y, err := strconv.Atoi(rectangleInfo[2])
-		if err != nil {
-			return rectanglesReturn, errors.New("Pixel position information is incorrect")
-		}
-
-		a, err := strconv.Atoi(rectangleInfo[3])
-		if err != nil {
-			return rectanglesReturn, errors.New("Pixel position information is incorrect")
-		}
-
-		b, err := strconv.Atoi(rectangleInfo[4])
-		if err != nil {
-			return rectanglesReturn, errors.New("Pixel position information is incorrect")
-		}
-
-		rectangle := image.Rect(x, y, a, b)
-		pixelRectangle := PixelRectangle{Color: rectangleInfo[0], Rectangle: rectangle}
 		rectanglesReturn = append(rectanglesReturn, pixelRectangle)
 	}
 
 	return rectanglesReturn, nil
+}
+
+// ExtractRectangleInfo from imploded string
+func (processor *ImageProcessor) ExtractRectangleInfo(s string) (PixelRectangle, error) {
+	pixelRectangle := PixelRectangle{}
+	rectangleInfo := strings.Split(s, "-")
+	x, err := strconv.Atoi(rectangleInfo[1])
+	if err != nil {
+		return pixelRectangle, errors.New("Pixel position information is incorrect")
+	}
+
+	y, err := strconv.Atoi(rectangleInfo[2])
+	if err != nil {
+		return pixelRectangle, errors.New("Pixel position information is incorrect")
+	}
+
+	a, err := strconv.Atoi(rectangleInfo[3])
+	if err != nil {
+		return pixelRectangle, errors.New("Pixel position information is incorrect")
+	}
+
+	b, err := strconv.Atoi(rectangleInfo[4])
+	if err != nil {
+		return pixelRectangle, errors.New("Pixel position information is incorrect")
+	}
+
+	rectangle := image.Rect(x, y, a, b)
+	pixelRectangle = PixelRectangle{Color: rectangleInfo[0], Rectangle: rectangle}
+	return pixelRectangle, nil
 }
